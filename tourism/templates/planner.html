@@ -1,162 +1,247 @@
-{% extends "base.html" %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Plan a Trip – AIT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block title %}Plan a Trip{% endblock %}
-
-{% block content %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 <style>
-    .planner-section {
-        max-width: 900px;
-        margin: 2rem auto;
-        padding: 1.5rem;
-    }
+/* ===== GLOBAL ===== */
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+background:radial-gradient(circle at top,#e0f2fe,#f8fafc 40%);
+color:#0f172a}
 
-    .premium-card {
-        border-radius: 18px;
-        padding: 1.25rem 1.5rem;
-        margin-bottom: 1rem;
-        background: linear-gradient(135deg, #fdfcfb 0%, #e2d1f9 50%, #f8efff 100%);
-        box-shadow: 0 12px 30px rgba(120, 81, 169, 0.18);
-        border: 1px solid rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(10px);
-    }
+/* ===== NAVBAR ===== */
+.navbar-wrap{
+max-width:1250px;
+margin:24px auto 0;
+padding:18px 26px;
+border-radius:26px;
+background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+box-shadow:0 25px 60px rgba(0,0,0,.18)}
 
-    .premium-card-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 0.75rem;
-    }
+.navbar{
+display:flex;
+align-items:center;
+justify-content:space-between}
 
-    .premium-icon {
-        display: inline-block;
-        width: 1.4rem;
-    }
+.brand h1{margin:0;font-size:2.1rem;font-weight:800}
+.brand a{color:white;text-decoration:none}
+.brand p{margin:4px 0 0;color:#e0f2fe;font-size:.95rem}
 
-    .premium-card-day {
-        font-weight: 700;
-        font-size: 1.05rem;
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-    }
+.nav-links{display:flex;gap:26px}
+.nav-links a{
+color:white;text-decoration:none;font-weight:600;font-size:.95rem;
+position:relative}
 
-    .premium-card-badge {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.6rem;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.85);
-        border: 1px solid rgba(255, 255, 255, 0.9);
-    }
+.nav-links a::after{
+content:"";position:absolute;left:0;bottom:-4px;
+width:0;height:2px;background:white;transition:.3s}
 
-    .premium-card-body p {
-        margin-bottom: 0.25rem;
-        font-size: 0.94rem;
-    }
+.nav-links a:hover::after{width:100%}
+
+/* ===== SEPARATOR ===== */
+.nav-separator{
+max-width:1250px;
+margin:26px auto 18px;
+height:1px;
+background:linear-gradient(to right,transparent,rgba(14,165,233,.45),transparent);
+}
+
+/* ===== MAIN ===== */
+main{
+max-width:1250px;
+margin:40px auto 80px;
+padding:20px}
+
+/* ======================
+   PLANNER UI
+====================== */
+
+.planner-section{max-width:1000px;margin:auto}
+
+.planner-card{
+background:rgba(255,255,255,.75);
+backdrop-filter:blur(20px) saturate(160%);
+border-radius:28px;
+padding:36px 40px;
+box-shadow:0 30px 80px rgba(0,0,0,.12)}
+
+.planner-card h2{
+text-align:center;
+font-size:2.2rem;
+font-weight:800;
+margin-bottom:1.8rem}
+
+label{font-weight:600;font-size:.9rem}
+
+input,select{
+width:100%;
+margin:.4rem 0 1.1rem;
+padding:12px 14px;
+border-radius:14px;
+border:1px solid #e5e7eb;
+font-size:.95rem}
+
+input:focus,select:focus{
+outline:none;
+border-color:#38bdf8;
+box-shadow:0 0 0 3px rgba(56,189,248,.25)}
+
+button{
+width:100%;
+margin-top:.6rem;
+padding:14px;
+border:none;
+border-radius:999px;
+background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+color:white;
+font-weight:800;
+cursor:pointer;
+box-shadow:0 14px 35px rgba(14,165,233,.45);
+transition:.25s}
+
+button:hover{
+transform:translateY(-2px);
+box-shadow:0 22px 50px rgba(14,165,233,.6)}
+
+/* ======================
+   ITINERARY
+====================== */
+
+.itinerary-card{
+background:rgba(255,255,255,.72);
+backdrop-filter:blur(18px);
+border-radius:26px;
+padding:26px 30px;
+box-shadow:0 22px 55px rgba(0,0,0,.12);
+margin-bottom:2rem}
+
+.itinerary-header{
+font-size:1.25rem;
+font-weight:800;
+margin-bottom:1rem}
+
+.itinerary-item{
+margin:.4rem 0;
+font-size:.95rem;
+color:#334155}
+
+.budget-card{
+background:rgba(255,255,255,.8);
+border-radius:24px;
+padding:26px;
+box-shadow:0 20px 50px rgba(0,0,0,.12)}
+
 </style>
+</head>
 
-<section class="planner-section">
-    <h2>Plan Your Trip</h2>
+<body>
 
-    <!-- Form -->
-    <form method="post" class="planner-form">
-        {% csrf_token %}
+<!-- NAVBAR -->
+<div class="navbar-wrap">
+  <div class="navbar">
+    <div class="brand">
+      <h1><a href="/">AIT – AI Tourism</a></h1>
+      <p>Smart travel planning powered by artificial intelligence</p>
+    </div>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/destinations/">Destinations</a>
+      <a href="/planner/">Plan a Trip</a>
+      <a href="/chatbot/">Chatbot</a>
+      <!-- <a href="/about/">About</a> -->
+      <a href="/contact/">Contact</a>
+    </div>
+  </div>
+</div>
 
-        <label for="destination">Destination</label>
-        <input type="text" name="destination" id="destination"
-        required value="{{ destination }}">
+<div class="nav-separator"></div>
 
-        <label for="start_date">Start Date</label>
-        <input type="date" name="start_date" id="start_date"
-        required value="{{ start_date }}">
+<main>
 
-        <label for="end_date">End Date</label>
-        <input type="date" name="end_date" id="end_date"
-        required value="{{ end_date }}">
+<div class="planner-section">
 
-        <label for="interests">Interests</label>
-        <input type="text" name="interests" id="interests"
-        value="{{ interests }}">
+<!-- FORM -->
+<div class="planner-card">
+<h2>✨ Plan Your Trip with AI</h2>
 
-        <label for="budget">Budget</label>
-        <select name="budget" id="budget">
-            <option value="">-- Choose --</option>
-            <option value="budget" {% if budget == "budget" %}selected{% endif %}>Budget</option>
-            <option value="middle" {% if budget == "middle" %}selected{% endif %}>Middle</option>
-            <option value="rich" {% if budget == "rich" %}selected{% endif %}>Rich</option>
-        </select>
+<form method="post">
+{% csrf_token %}
 
-        <button type="submit">Generate Itinerary</button>
-    </form>
+<label>Destination</label>
+<input type="text" name="destination" required value="{{ destination }}">
 
-    {% if plan %}
-    <h3>Your Travel Plan</h3>
+<label>Budget</label>
+<select name="budget">
+<option value="">-- Choose --</option>
+<option value="budget" {% if budget == "budget" %}selected{% endif %}>Budget</option>
+<option value="middle" {% if budget == "middle" %}selected{% endif %}>Middle</option>
+<option value="rich" {% if budget == "rich" %}selected{% endif %}>Luxury</option>
+</select>
 
-    {% for day in plan %}
-        <div class="premium-card">
-            <div class="premium-card-header">
-                <div class="premium-card-day">
-                    📅 {{ day.0 }}
-                </div>
-                <div class="premium-card-badge">
-                    Day {{ forloop.counter }}
-                </div>
-            </div>
+<label>Start Date</label>
+<input type="date" name="start_date" required value="{{ start_date }}">
 
-            <div class="premium-card-body">
+<label>End Date</label>
+<input type="date" name="end_date" required value="{{ end_date }}">
 
-                {% for line in day|slice:"1:" %}
-                    {% with lower=line|lower %}
+<label>Interests</label>
+<input type="text" name="interests" placeholder="Beaches, food, temples, adventure..." value="{{ interests }}">
 
-                        {% if "museum" in lower or "gallery" in lower %}
-                            {% with icon="🖼️" %}
-                                <p><span class="premium-icon">{{ icon }}</span> {{ line }}</p>
-                            {% endwith %}
+<button type="submit">Generate AI Itinerary</button>
+</form>
+</div>
 
-                        {% elif "mall" in lower or "market" in lower or "bazaar" in lower or "shopping" in lower %}
-                            {% with icon="🛍️" %}
-                                <p><span class="premium-icon">{{ icon }}</span> {{ line }}</p>
-                            {% endwith %}
+<!-- OUTPUT -->
+{% if plan %}
+<div style="margin-top:3.5rem;">
+<h2 style="text-align:center;font-size:2.2rem;font-weight:800;margin-bottom:2.2rem;">🗺️ Your AI Travel Plan</h2>
 
-                        {% elif "food" in lower or "restaurant" in lower or "cafe" in lower or "hotel" in lower or "biryani" in lower or "lunch" in lower or "dinner" in lower %}
-                            {% with icon="🍽️" %}
-                                <p><span class="premium-icon">{{ icon }}</span> {{ line }}</p>
-                            {% endwith %}
+{% for day in plan %}
+<div class="itinerary-card">
+<div class="itinerary-header">📅 {{ day.0 }}</div>
 
-                        {% else %}
-                            {% with icon="📍" %}
-                                <p><span class="premium-icon">{{ icon }}</span> {{ line }}</p>
-                            {% endwith %}
-                        {% endif %}
+{% for line in day|slice:"1:" %}
+{% with l=line|lower %}
+{% if "food" in l or "restaurant" in l or "cafe" in l or "hotel" in l or "biryani" in l or "lunch" in l or "dinner" in l %}
+<p class="itinerary-item">🍽️ {{ line }}</p>
+{% elif "temple" in l or "church" in l or "mosque" in l %}
+<p class="itinerary-item">🛕 {{ line }}</p>
+{% elif "museum" in l or "gallery" in l %}
+<p class="itinerary-item">🖼️ {{ line }}</p>
+{% elif "beach" in l or "lake" in l or "waterfall" in l or "park" in l %}
+<p class="itinerary-item">🌿 {{ line }}</p>
+{% elif "mall" in l or "market" in l or "bazaar" in l or "shopping" in l %}
+<p class="itinerary-item">🛍️ {{ line }}</p>
+{% elif "fort" in l or "palace" in l or "monument" in l %}
+<p class="itinerary-item">🏛️ {{ line }}</p>
+{% else %}
+<p class="itinerary-item">📍 {{ line }}</p>
+{% endif %}
+{% endwith %}
+{% endfor %}
+</div>
+{% endfor %}
 
-                    {% endwith %}
-                {% endfor %}
-            </div>
-        </div>
-    {% endfor %}
+{% if estimated_budget %}
+<div class="budget-card" style="text-align:center;margin-top:2rem">
+<h3>💰 Estimated Budget</h3>
+<p><strong>Total:</strong> ₹{{ estimated_budget }}</p>
+<p><strong>Per Day:</strong> ₹{{ daily_budget }}</p>
+</div>
+{% endif %}
 
-    <!-- Budget Section -->
-    {% if estimated_budget %}
-        <div class="estimated-budget">
-            <h4>Estimated Budget</h4>
-            <p><strong>Total:</strong> ₹{{ estimated_budget }}</p>
-            <p><strong>Per Day:</strong> ₹{{ daily_budget }}</p>
-        </div>
-    {% endif %}
+</div>
+{% endif %}
 
-    <!-- PDF Button -->
-    <form method="post" class="download-form">
-        {% csrf_token %}
-        <input type="hidden" name="destination" value="{{ destination }}">
-        <input type="hidden" name="start_date" value="{{ start_date }}">
-        <input type="hidden" name="end_date" value="{{ end_date }}">
-        <input type="hidden" name="interests" value="{{ interests }}">
-        <input type="hidden" name="budget" value="{{ budget }}">
-        <button type="submit" name="download" value="1">Download PDF</button>
-    </form>
+</div>
+</main>
 
-    {% endif %}
-</section>
-
-{% endblock %}
+</body>
+</html>
