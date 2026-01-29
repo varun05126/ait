@@ -1,103 +1,254 @@
-{% extends 'base.html' %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Top Destinations – AIT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block title %}Top Destinations - AIT{% endblock %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-{% block content %}
-<section class="destinations">
-    <h2>Top Travel Destinations</h2>
-    <p>Explore popular locations known for their beauty, culture, and adventure.</p>
+<style>
+/* ===== GLOBAL ===== */
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+background:radial-gradient(circle at top,#e0f2fe,#f8fafc 40%);
+color:#0f172a}
 
-    <div class="destination-grid">
-        <div class="destination-card">
-            <img src="{% static 'images/paris.jpg' %}" alt="Paris">
-            <h3>Paris, France</h3>
-            <p>Iconic landmarks, romantic cafés, and timeless charm in the City of Light.</p>
-        </div>
+/* ===== NAVBAR ===== */
+.navbar-wrap{
+max-width:1250px;
+margin:24px auto 0;
+padding:18px 26px;
+border-radius:26px;
+background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+box-shadow:0 25px 60px rgba(0,0,0,.18)}
 
-        <div class="destination-card">
-            <img src="{% static 'images/Tokyo.jpg' %}" alt="Tokyo">
-            <h3>Tokyo, Japan</h3>
-            <p>A dynamic mix of ancient traditions and futuristic innovations.</p>
-        </div>
+.navbar{
+display:flex;
+align-items:center;
+justify-content:space-between}
 
-        <div class="destination-card">
-            <img src="{% static 'images/kerala.jpg' %}" alt="Kerala">
-            <h3>Kerala, India</h3>
-            <p>Relaxing backwaters, lush greenery, and cultural richness.</p>
-        </div>
+.brand h1{margin:0;font-size:2.1rem;font-weight:800}
+.brand a{color:white;text-decoration:none}
+.brand p{margin:4px 0 0;color:#e0f2fe;font-size:.95rem}
 
-        <div class="destination-card">
-            <img src="{% static 'images/newyork.jpg' %}" alt="New York City">
-            <h3>New York City, USA</h3>
-            <p>A bustling city with iconic landmarks, art, and diversity.</p>
-        </div>
+.nav-links{display:flex;gap:26px}
+.nav-links a{
+color:white;text-decoration:none;font-weight:600;font-size:.95rem;
+position:relative}
 
-        <div class="destination-card">
-            <img src="{% static 'images/bali.jpg' %}" alt="Bali">
-            <h3>Bali, Indonesia</h3>
-            <p>Peaceful temples, beaches, and a serene tropical vibe.</p>
-        </div>
+.nav-links a::after{
+content:"";position:absolute;left:0;bottom:-4px;
+width:0;height:2px;background:white;transition:.3s}
 
-        <div class="destination-card">
-            <img src="{% static 'images/rome.jpg' %}" alt="Rome">
-            <h3>Rome, Italy</h3>
-            <p>Ancient ruins, Renaissance art, and culinary delights.</p>
-        </div>
+.nav-links a:hover::after{width:100%}
 
-        <div class="destination-card">
-            <img src="{% static 'images/london.jpg' %}" alt="London">
-            <h3>London, UK</h3>
-            <p>A rich blend of history, modern attractions, and cultural events.</p>
-        </div>
+/* ===== SEPARATOR ===== */
+.nav-separator{
+max-width:1250px;
+margin:26px auto 18px;
+height:1px;
+background:linear-gradient(to right,transparent,rgba(14,165,233,.45),transparent);
+}
 
-        <div class="destination-card">
-            <img src="{% static 'images/kyoto.jpg' %}" alt="Kyoto">
-            <h3>Kyoto, Japan</h3>
-            <p>Peaceful shrines, traditional tea houses, and scenic beauty.</p>
-        </div>
+/* ===== MAIN ===== */
+main{
+max-width:1250px;
+margin:40px auto 80px;
+padding:20px}
 
-        <div class="destination-card">
-            <img src="{% static 'images/capetown.jpg' %}" alt="Cape Town">
-            <h3>Cape Town, South Africa</h3>
-            <p>Majestic mountains, coastal views, and vibrant culture.</p>
-        </div>
+/* ==============================
+   DESTINATIONS – LUXURY UI
+============================== */
 
-        <div class="destination-card">
-            <img src="{% static 'images/sydney.jpg' %}" alt="Sydney">
-            <h3>Sydney, Australia</h3>
-            <p>Famous Opera House, beaches, and sunny outdoor lifestyle.</p>
-        </div>
+.destinations{text-align:center}
 
-        <div class="destination-card">
-            <img src="{% static 'images/istanbul.jpg' %}" alt="Istanbul">
-            <h3>Istanbul, Turkey</h3>
-            <p>Where Europe meets Asia – historic sites and rich traditions.</p>
-        </div>
+.destinations h2{
+font-size:2.6rem;
+font-weight:800;
+margin-bottom:.5rem}
 
-        <div class="destination-card">
-            <img src="{% static 'images/seoul.jpg' %}" alt="Seoul">
-            <h3>Seoul, South Korea</h3>
-            <p>Modern innovation and deep-rooted traditions in harmony.</p>
-        </div>
+.destinations > p{
+color:#64748b;
+margin-bottom:3rem;
+font-size:1.05rem}
 
-        <div class="destination-card">
-            <img src="{% static 'images/barcelona.jpg' %}" alt="Barcelona">
-            <h3>Barcelona, Spain</h3>
-            <p>Unique architecture, Mediterranean beaches, and vibrant art.</p>
-        </div>
+.destination-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:2.2rem}
 
-        <div class="destination-card">
-            <img src="{% static 'images/amsterdam.jpg' %}" alt="Amsterdam">
-            <h3>Amsterdam, Netherlands</h3>
-            <p>Charming canals, cycling culture, and welcoming vibe.</p>
-        </div>
+.destination-link{text-decoration:none;color:inherit}
 
-        <div class="destination-card">
-            <img src="{% static 'images/banff.jpg' %}" alt="Banff">
-            <h3>Banff, Canada</h3>
-            <p>Stunning mountain scenery and outdoor adventures in nature.</p>
-        </div>
+.destination-card{
+border-radius:26px;
+overflow:hidden;
+background:rgba(255,255,255,.72);
+backdrop-filter:blur(18px) saturate(160%);
+box-shadow:0 22px 50px rgba(0,0,0,.12);
+transition:.4s ease;
+position:relative}
+
+.destination-card:hover{
+transform:translateY(-12px) scale(1.035);
+box-shadow:0 40px 90px rgba(0,0,0,.22),
+0 0 0 1px rgba(255,255,255,.6) inset}
+
+.destination-card img{
+width:100%;
+height:200px;
+object-fit:cover}
+
+.destination-card h3{
+padding:1.1rem 1.2rem .2rem;
+font-size:1.25rem;
+font-weight:700}
+
+.destination-card p{
+padding:0 1.2rem 1.5rem;
+font-size:.95rem;
+color:#64748b}
+
+.destination-card::after{
+content:"✨ Build AI Trip →";
+position:absolute;
+bottom:16px;right:16px;
+background:rgba(255,255,255,.9);
+backdrop-filter:blur(10px);
+padding:6px 14px;
+font-size:.75rem;
+border-radius:999px;
+opacity:0;
+transform:translateY(8px);
+transition:.3s;
+box-shadow:0 8px 20px rgba(0,0,0,.15)}
+
+.destination-card:hover::after{
+opacity:1;
+transform:translateY(0)}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar-wrap">
+  <div class="navbar">
+    <div class="brand">
+      <h1><a href="/">AIT – AI Tourism</a></h1>
+      <p>Smart travel planning powered by artificial intelligence</p>
     </div>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/destinations/">Destinations</a>
+      <a href="/planner/">Plan a Trip</a>
+      <a href="/chatbot/">Chatbot</a>
+      <!-- <a href="/about/">About</a> -->
+      <a href="/contact/">Contact</a>
+    </div>
+  </div>
+</div>
+
+<div class="nav-separator"></div>
+
+<main>
+
+<section class="destinations">
+<h2>🌍 Explore Dream Destinations</h2>
+<p>Select a destination and instantly generate your AI-powered travel plan.</p>
+
+<div class="destination-grid">
+
+<a href="/planner/?destination=Paris" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/paris.jpg' %}">
+<h3>Paris, France 🇫🇷</h3>
+<p>Romantic cafés, Eiffel Tower, museums, and timeless charm.</p>
+</div></a>
+
+<a href="/planner/?destination=Tokyo" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/Tokyo.jpg' %}">
+<h3>Tokyo, Japan 🇯🇵</h3>
+<p>Neon cityscapes, temples, anime culture, and innovation.</p>
+</div></a>
+
+<a href="/planner/?destination=Kerala" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/kerala.jpg' %}">
+<h3>Kerala, India 🇮🇳</h3>
+<p>Backwaters, beaches, ayurveda, and lush green nature.</p>
+</div></a>
+
+<a href="/planner/?destination=New York" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/newyork.jpg' %}">
+<h3>New York City 🇺🇸</h3>
+<p>Skyscrapers, Broadway, global food, and city energy.</p>
+</div></a>
+
+<a href="/planner/?destination=Bali" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/bali.jpg' %}">
+<h3>Bali, Indonesia 🇮🇩</h3>
+<p>Luxury resorts, temples, beaches, and island peace.</p>
+</div></a>
+
+<a href="/planner/?destination=Rome" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/rome.jpg' %}">
+<h3>Rome, Italy 🇮🇹</h3>
+<p>Colosseum, ancient history, Renaissance art, and food.</p>
+</div></a>
+
+<a href="/planner/?destination=London" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/london.jpg' %}">
+<h3>London, UK 🇬🇧</h3>
+<p>Royal palaces, museums, modern culture, and nightlife.</p>
+</div></a>
+
+<a href="/planner/?destination=Kyoto" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/kyoto.jpg' %}">
+<h3>Kyoto, Japan 🇯🇵</h3>
+<p>Traditional shrines, tea houses, and cherry blossoms.</p>
+</div></a>
+
+<a href="/planner/?destination=Cape Town" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/capetown.jpg' %}">
+<h3>Cape Town 🇿🇦</h3>
+<p>Mountains, oceans, vineyards, and coastal beauty.</p>
+</div></a>
+
+<a href="/planner/?destination=Sydney" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/sydney.jpg' %}">
+<h3>Sydney, Australia 🇦🇺</h3>
+<p>Opera house, beaches, skyline, and outdoor lifestyle.</p>
+</div></a>
+
+<a href="/planner/?destination=Istanbul" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/istanbul.jpg' %}">
+<h3>Istanbul, Turkey 🇹🇷</h3>
+<p>Mosques, bazaars, history, and cultural fusion.</p>
+</div></a>
+
+<a href="/planner/?destination=Banff" class="destination-link">
+<div class="destination-card">
+<img src="{% static 'images/banff.jpg' %}">
+<h3>Banff, Canada 🇨🇦</h3>
+<p>Turquoise lakes, glaciers, and mountain adventure.</p>
+</div></a>
+
+</div>
 </section>
-{% endblock %}
+
+</main>
+
+</body>
+</html>
