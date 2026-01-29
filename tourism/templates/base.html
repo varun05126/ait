@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}AI Tourism{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1><a href="/">AIT - AI Tourism</a></h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/destinations/">Destinations</a>
+            <a href="/planner/">Plan a Trip</a>
+            <a href="/chatbot/">Chatbot</a>
+            <a href="/about/">About</a>
+            <a href="/contact/">Contact</a>
+        </nav>
+    </header>
+
+    <main>{% block content %}{% endblock %}</main>
+
+    <footer>
+        <p>&copy; 2025 AIT. All rights reserved.</p>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Plan a Trip{% endblock %}
+
+{% block content %}
+
+<style>
+    .planner-section {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+    }
+
+    .premium-card {
+        border-radius: 18px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #fdfcfb 0%, #e2d1f9 50%, #f8efff 100%);
+        box-shadow: 0 12px 30px rgba(120, 81, 169, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+    }
+
+    .premium-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .premium-icon {
+        display: inline-block;
+        width: 1.4rem;
+    }
+
+    .premium-card-day {
+        font-weight: 700;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .premium-card-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    .premium-card-body p {
+        margin-bottom: 0.25rem;
+        font-size: 0.94rem;
+    }
+</style>
+
+<section class="planner-section">
+    <h2>Plan Your Trip</h2>
+
+    <!-- Form -->
+    <form method="post" class="planner-form">
+        {% csrf_token %}
+
+        <label for="destination">Destination</label>
+        <input type="text" name="destination" id="destination"
+        required value="{{ destination }}">
+
+        <label for="start_date">Start Date</label>
+        <input type="date" name="start_date" id="start_date"
+        required value="{{ start_date }}">
+
+        <label for="end_date">End Date</label>
+        <input type="date" name="end_date" id="end_date"
+        required value="{{ end_date }}">
+
+        <label for="interests">Interests</label>
+        <input type="text" name="interests" id="interests"
+        value="{{ interests }}">
+
+        <label for="budget">Budget</label>
+        <select name="budget" id="budget">
+            <option value="">-- Choose --</option>
+            <option value="budget" {% if budget == "budget" %}selected{% endif %}>Budget</option>
+            <option value="middle" {% if budget == "middle" %}selected{% endif %}>Middle</option>
+            <option value="rich" {% if budget == "rich" %}selected{% endif %}>Rich</option>
+        </select>
+
+        <button type="submit">Generate Itinerary</button>
+    </form>
+
+    {% if plan %}
+    <h3>Your Travel Plan</h3>
+
+    {% for day in plan %}
+        <div class="premium-card">
+            <div class="premium-card-header">
+                <div class="premium-card-day">
+                    📅 {{ day.0 }}
+                </div>
+                <div class="premium-card-badge">
+                    Day {{ forloop.counter }}
+                </div>
+            </div>
+
+            <div class="premium-card-body">
+
+                {% for line in day|slice:"1:" %}
+                    {% with lower=line|lower %}
+
+                        {% if "museum" in lower or "gallery" in lower %}
+                            {% with icon="🖼️" %}
+                                <p><span class="premium-icon">{{ icon }}</span> {{ line }}</p>
+                            {% endwith %}
+
+                        {% elif "mall" in lower or "market" in lower or "bazaar" in lower or "shopping" in lower %}
+                            {% with icon="🛍️" %}
+                                <p><span class="premium-icon">{{ icon }}</span> {{ line }}</p>
+                            {% endwith %}
+
+                        {% elif "food" in lower or "restaurant" in lower or "cafe" in lower or "hotel" in lower or "biryani" in lower or "lunch" in lower or "dinner" in lower %}
+                            {% with icon="🍽️" %}
+                                <p><span class="premium-icon">{{ icon }}</span> {{ line }}</p>
+                            {% endwith %}
+
+                        {% else %}
+                            {% with icon="📍" %}
+                                <p><span class="premium-icon">{{ icon }}</span> {{ line }}</p>
+                            {% endwith %}
+                        {% endif %}
+
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+
+    <!-- Budget Section -->
+    {% if estimated_budget %}
+        <div class="estimated-budget">
+            <h4>Estimated Budget</h4>
+            <p><strong>Total:</strong> ₹{{ estimated_budget }}</p>
+            <p><strong>Per Day:</strong> ₹{{ daily_budget }}</p>
+        </div>
+    {% endif %}
+
+    <!-- PDF Button -->
+    <form method="post" class="download-form">
+        {% csrf_token %}
+        <input type="hidden" name="destination" value="{{ destination }}">
+        <input type="hidden" name="start_date" value="{{ start_date }}">
+        <input type="hidden" name="end_date" value="{{ end_date }}">
+        <input type="hidden" name="interests" value="{{ interests }}">
+        <input type="hidden" name="budget" value="{{ budget }}">
+        <button type="submit" name="download" value="1">Download PDF</button>
+    </form>
+
+    {% endif %}
+</section>
+
+{% endblock %}

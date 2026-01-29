@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Travel Assistant - AIT{% endblock %}
+
+{% block content %}
+<section class="chatbot-section">
+    <h2>AI Travel Assistant</h2>
+    <p>Ask questions, get recommendations, or plan your journey — all in one place.</p>
+
+    <div class="chat-window" id="chat-window" style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 1rem; border-radius: 10px; background: #f9f9f9;">
+        <!-- Chat messages will appear here -->
+    </div>
+
+    <form id="chat-form" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+        {% csrf_token %}
+        <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" required style="flex: 1; padding: 0.5rem;" />
+        <button type="submit" style="padding: 0.5rem 1rem;">Send</button>
+    </form>
+
+    <div id="map" style="height: 400px; margin-top: 2rem; border-radius: 10px;"></div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Load Google Maps JavaScript API -->
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_pxijBXz8bKVgRStA8bO92L8pHpb5nNA&libraries=places"
+    async defer>
+</script>
+
+<script>
+// Google Map Initialization
+function initMap() {
+    const indiaCenter = { lat: 20.5937, lng: 78.9629 };
+    const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 5,
+        center: indiaCenter
+    });
+
+    new google.maps.Marker({
+        position: indiaCenter,
+        map: map,
+        title: "India Center"
+    });
+}
+window.initMap = initMap;
+
+window.addEventListener('load', () => {
+    if (typeof google !== 'undefined' && google.maps) {
+        initMap();
+    } else {
+        console.error('Google Maps failed to load.');
+    }
+});
+
+// Chatbot interaction
+document.getElementById('chat-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const input = document.getElementById('user-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    appendMessage('You', message);
+    input.value = '';
+
+    try {
+        const response = await fetch("{% url 'chatbot_response' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie('csrftoken')
+            },
+            body: JSON.stringify({ message: message })
+        });
+
+        const data = await response.json();
+        appendMessage('AIT', data.reply || "Sorry, I didn’t understand that.");
+    } catch (error) {
+        console.error(error);
+        appendMessage('AIT', "There was a problem processing your request. Please try again.");
+    }
+});
+
+// Add chat messages
+function appendMessage(sender, text) {
+    const chatWindow = document.getElementById('chat-window');
+    const msg = document.createElement('div');
+    msg.classList.add('chat-message');
+    msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+    chatWindow.appendChild(msg);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+// CSRF Token helper
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}
