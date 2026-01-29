@@ -10,86 +10,72 @@ import io
 import json
 import os
 
-# -------------------- OPENAI (Chatbot only) --------------------
-from openai import OpenAI
+# ==================== GROQ (AI ENGINE) ====================
+from groq import Groq
 
-OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
+GROQ_KEY = os.environ.get("GROQ_API_KEY")
 
-if OPENAI_KEY:
-    client = OpenAI(api_key=OPENAI_KEY)
+if GROQ_KEY:
+    groq_client = Groq(api_key=GROQ_KEY)
 else:
-    client = None
-    print("⚠️ Warning: OPENAI_API_KEY not found. Chatbot will be disabled.")
+    groq_client = None
+    print("⚠️ GROQ_API_KEY not found. AI features disabled.")
 
 
-# -------------------- GEMINI (Trip Planner) --------------------
-import google.generativeai as genai
-
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
-if GEMINI_KEY:
-    genai.configure(api_key=GEMINI_KEY)
-else:
-    print("⚠️ Warning: GEMINI_API_KEY not found. Trip planner will use fallback only.")
-
-
-def get_itinerary(prompt: str) -> str:
-    """
-    Call Gemini to generate the raw itinerary text.
-    Uses gemini-2.0-flash as you requested.
-    """
-    if not GEMINI_KEY:
+def groq_generate(prompt, system="You are a helpful assistant."):
+    if not groq_client:
         return ""
 
     try:
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        response = model.generate_content(prompt)
-        # Gemini Python SDK: response.text holds the combined output
-        return getattr(response, "text", "").strip()
+        completion = groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.6,
+        )
+        return completion.choices[0].message.content.strip()
+
     except Exception as e:
-        print("Gemini Planner Error:", e)
+        print("Groq Error:", e)
         return ""
 
 
-# -------------------- CONTACT FORM / PDF --------------------
+# ==================== PDF & CONTACT ====================
 from .forms import ContactForm
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 
 
-# -------------------- CHATBOT API --------------------
+# ==================== CHATBOT API ====================
 @require_http_methods(["POST"])
 def chatbot_response(request):
-    if client is None:
-        return JsonResponse({
-            "reply": "Chatbot is unavailable because the API key is missing."
-        })
+    if not groq_client:
+        return JsonResponse({"reply": "Chatbot is currently unavailable."})
 
     try:
         data = json.loads(request.body)
         user_msg = data.get("message", "").strip()
 
         if not user_msg:
-            return JsonResponse({"reply": "Please enter a message."})
+            return JsonResponse({"reply": "Please type a message."})
 
-        completion = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": user_msg},
-            ],
+        reply = groq_generate(
+            user_msg,
+            system="You are a smart, friendly, luxury AI travel assistant. Give helpful, clear travel advice."
         )
 
-        reply = completion.choices[0].message.content.strip()
-        return JsonResponse({"reply": reply})
+        return JsonResponse({"reply": reply or "I couldn't generate a response."})
 
     except Exception as e:
-        print("OpenAI Chatbot Error:", e)
+        print("Chatbot Error:", e)
         return JsonResponse({"reply": "Something went wrong."})
 
 
-# -------------------- STATIC PAGES --------------------
+# ==================== STATIC PAGES ====================
 def index(request):
-    return render(request, "index.html")
+    return render(request, "base.html")
 
 
 def destinations(request):
@@ -105,7 +91,7 @@ def chatbot(request):
     return render(request, "chatbot.html")
 
 
-# -------------------- TRIP PLANNER --------------------
+# ==================== TRIP PLANNER ====================
 def planner(request):
     plan = None
     destination = start_date = end_date = interests = budget = ""
@@ -118,7 +104,7 @@ def planner(request):
         interests = request.POST.get("interests", "").strip()
         budget = request.POST.get("budget", "").strip()
 
-        # Validate dates (from HTML5 date input -> YYYY-MM-DD)
+        # ---- DATE VALIDATION ----
         try:
             start = datetime.strptime(start_date, "%Y-%m-%d")
             end = datetime.strptime(end_date, "%Y-%m-%d")
@@ -132,135 +118,101 @@ def planner(request):
 
         total_days = (end - start).days + 1
 
-        # ----- INTERESTS TEXT -----
-        if interests.lower() == "all":
-            interests_description = (
-                "history, culture, temples, museums, nature, adventure, lakes, "
-                "nightlife, food, shopping, hidden gems"
-            )
-        else:
-            interests_description = interests or "popular attractions"
+        # ---- INTERESTS ----
+        interests_description = interests or "popular attractions, food, culture, nature"
 
-        # ----- GEMINI PROMPT -----
+        # ---- PROMPT ----
         ai_prompt = f"""
-You are a professional Indian travel planner. Generate a REAL, day-wise itinerary for {destination}.
+You are a professional Indian travel planner.
+
+Create a REAL, day-wise itinerary for {destination}.
 
 DETAILS:
-- City: {destination}
-- Start Date: {start.strftime("%d %B %Y")}
-- End Date: {end.strftime("%d %B %Y")}
-- Total Days: {total_days}
-- Traveller Interests: {interests_description}
-- Budget Type: {budget} (budget / middle / rich)
+City: {destination}
+Start: {start.strftime("%d %B %Y")}
+End: {end.strftime("%d %B %Y")}
+Days: {total_days}
+Interests: {interests_description}
+Budget: {budget}
 
-STRICT OUTPUT FORMAT (NO bullets, NO extra explanation, NO intro, NO outro):
+FORMAT STRICTLY LIKE THIS:
 
-Day 1 - <DayName>, <Date in dd Month yyyy>
-Attraction 1 (short description)
-Attraction 2 (short description)
-Food: Real restaurant / cafe / hotel with local food
-Attraction 3 (short description)
-Optional: Shopping place or lake / park
-
-Day 2 - <DayName>, <Date in dd Month yyyy>
-Attraction 1
-Attraction 2
-Food: Some food place
-Attraction 3
-Shopping / Nightlife place
+Day 1 - Monday, 12 March 2026
+Place 1 (short description)
+Place 2
+Food: Real restaurant or cafe
+Place 3
+Optional evening place
 
 RULES:
-- Use ACTUAL dates between {start.strftime("%d %B %Y")} and {end.strftime("%d %B %Y")}
-- At least 4 REAL places per day (famous or good local spots).
-- Include at least one REAL food place (restaurant / cafe / hotel) per day.
-- Include museums, lakes, shopping streets, etc. when suitable.
-- Do NOT add any headings like "Itinerary" or "Summary".
-- Do NOT include any Markdown, bullets, or numbering except the "Day X - ..." line.
+- Use REAL locations
+- At least 4 places per day
+- Include food daily
+- NO markdown, bullets, headings, or explanations
 """
 
-        # ----- CALL GEMINI -----
-        ai_text = get_itinerary(ai_prompt)
+        ai_text = groq_generate(
+            ai_prompt,
+            system="You are a professional luxury travel planner who designs premium, realistic travel itineraries."
+        )
 
-        # ----- PARSE GEMINI RESPONSE -----
-        # We want plan as: list of days; each day is list of lines (first line is the Day header)
+        # ---- PARSE PLAN ----
         plan = []
         if ai_text:
-            # Split by "Day " to separate blocks
             blocks = ai_text.split("Day ")
             for block in blocks:
                 b = block.strip()
                 if not b:
                     continue
                 lines = [line.strip() for line in b.split("\n") if line.strip()]
-                # Put back "Day " prefix to first line
                 lines[0] = "Day " + lines[0]
                 plan.append(lines)
 
-        # ----- FALLBACK IF GEMINI FAILS -----
+        # ---- FALLBACK ----
         if not plan:
             plan = []
             for i in range(total_days):
-                day_date = start + timedelta(days=i)
-                title = f"Day {i+1} - {day_date.strftime('%A, %d %B %Y')}"
+                date = start + timedelta(days=i)
                 plan.append([
-                    title,
-                    f"Visit popular attractions in {destination or 'the city'}.",
-                    "Try a famous local food place.",
+                    f"Day {i+1} - {date.strftime('%A, %d %B %Y')}",
+                    f"Explore famous attractions in {destination}.",
+                    "Try popular local food spots.",
+                    "Visit markets, parks, or heritage places."
                 ])
 
-        # ----- BUDGET CALCULATION -----
+        # ---- BUDGET ----
         budget_rates = {"budget": 3000, "middle": 10000, "rich": 20000}
         daily_budget = budget_rates.get(budget, 5000)
         estimated_budget = daily_budget * total_days
 
-        # ----- PDF EXPORT -----
+        # ---- PDF EXPORT ----
         if "download" in request.POST:
             buffer = io.BytesIO()
             p = canvas.Canvas(buffer, pagesize=A4)
             width, height = A4
 
-            # Title
             p.setFont("Helvetica-Bold", 18)
-            trip_title = f"Trip Itinerary: {destination or 'Your Trip'}"
-            p.drawString(40, height - 40, trip_title)
-
+            p.drawString(40, height - 40, f"Trip Itinerary – {destination}")
             y = height - 80
 
-            # Loop through planned days
             for day in plan:
                 for line in day:
-                    if y < 80:  # new page
+                    if y < 80:
                         p.showPage()
-                        p.setFont("Helvetica", 11)
                         y = height - 60
 
-                    text = line
-                    # Add emojis in PDF text as well (may show as boxes depending on font, but it's fine)
                     if line.startswith("Day"):
-                        text = f"📅 {line}"
                         p.setFont("Helvetica-Bold", 14)
+                        p.drawString(40, y, "📅 " + line)
+                        y -= 22
                     else:
-                        # Simple heuristics for icons
-                        lower = line.lower()
-                        icon = "📍"
-                        if "food" in lower or "restaurant" in lower or "cafe" in lower or "hotel" in lower or "biryani" in lower or "lunch" in lower or "dinner" in lower:
-                            icon = "🍽️"
-                        elif "museum" in lower or "gallery" in lower:
-                            icon = "🖼️"
-                        elif "mall" in lower or "market" in lower or "bazaar" in lower or "shopping" in lower:
-                            icon = "🛍️"
-                        text = f"{icon} {line}"
-
                         p.setFont("Helvetica", 11)
+                        p.drawString(40, y, "📍 " + line)
+                        y -= 16
 
-                    p.drawString(40, y, text)
-                    y -= 18
-
-            # Budget summary at the bottom of last page
             y -= 20
             p.setFont("Helvetica-Bold", 12)
-            budget_line = f"Estimated Budget: ₹{estimated_budget} (₹{daily_budget}/day × {total_days} days)"
-            p.drawString(40, y, budget_line)
+            p.drawString(40, y, f"Estimated Budget: ₹{estimated_budget}")
 
             p.save()
             buffer.seek(0)
@@ -268,10 +220,9 @@ RULES:
             return HttpResponse(
                 buffer,
                 content_type="application/pdf",
-                headers={"Content-Disposition": 'attachment; filename="trip_plan.pdf"'},
+                headers={"Content-Disposition": 'attachment; filename="AIT_Trip_Plan.pdf"'},
             )
 
-    # GET request or after POST processing
     return render(request, "planner.html", {
         "plan": plan,
         "destination": destination,
@@ -285,7 +236,7 @@ RULES:
     })
 
 
-# -------------------- CONTACT FORM --------------------
+# ==================== CONTACT ====================
 def contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST)
