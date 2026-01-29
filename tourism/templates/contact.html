@@ -1,40 +1,202 @@
-{% extends 'base.html' %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Contact – AIT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block title %}Contact{% endblock %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-{% block content %}
-<section class="contact-section">
-    <h2>Get in Touch</h2>
-    <p>Have a question, suggestion, or something to share? We’d love to hear from you.</p>
+<style>
+/* ===== GLOBAL ===== */
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+background:radial-gradient(circle at top,#e0f2fe,#f8fafc 40%);
+color:#0f172a}
 
-    <form method="post" class="contact-form">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="{{ form.name.id_for_label }}">Name</label>
-            {{ form.name }}
-        </div>
+/* ===== NAVBAR ===== */
+.navbar-wrap{
+max-width:1250px;
+margin:24px auto 0;
+padding:18px 26px;
+border-radius:26px;
+background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+box-shadow:0 25px 60px rgba(0,0,0,.18)}
 
-        <div class="form-group">
-            <label for="{{ form.email.id_for_label }}">Email</label>
-            {{ form.email }}
-        </div>
+.navbar{
+display:flex;
+align-items:center;
+justify-content:space-between}
 
-        <div class="form-group">
-            <label for="{{ form.message.id_for_label }}">Message</label>
-            {{ form.message }}
-        </div>
+.brand h1{margin:0;font-size:2.1rem;font-weight:800}
+.brand a{color:white;text-decoration:none}
+.brand p{margin:4px 0 0;color:#e0f2fe;font-size:.95rem}
 
-        <button type="submit" class="submit-button">Send Message</button>
-    </form>
+.nav-links{display:flex;gap:26px}
+.nav-links a{
+color:white;text-decoration:none;font-weight:600;font-size:.95rem;
+position:relative}
 
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <p>{{ message }}</p>
-        {% endfor %}
+.nav-links a::after{
+content:"";position:absolute;left:0;bottom:-4px;
+width:0;height:2px;background:white;transition:.3s}
+
+.nav-links a:hover::after{width:100%}
+
+/* ===== SEPARATOR ===== */
+.nav-separator{
+max-width:1250px;
+margin:26px auto 18px;
+height:1px;
+background:linear-gradient(to right,transparent,rgba(14,165,233,.45),transparent);
+}
+
+/* ===== MAIN ===== */
+main{
+max-width:1250px;
+margin:40px auto 80px;
+padding:20px}
+
+/* ======================
+   CONTACT UI
+====================== */
+
+.contact-section{
+max-width:720px;
+margin:auto;
+text-align:center}
+
+.contact-section h2{
+font-size:2.4rem;
+font-weight:800;
+margin-bottom:.4rem}
+
+.contact-section > p{
+color:#475569;
+margin-bottom:2.6rem;
+font-size:1.05rem}
+
+.contact-form{
+background:rgba(255,255,255,.75);
+backdrop-filter:blur(20px) saturate(160%);
+border-radius:28px;
+padding:38px 42px;
+box-shadow:0 30px 80px rgba(0,0,0,.12);
+text-align:left}
+
+.form-group{margin-bottom:1.4rem}
+
+label{
+display:block;
+font-weight:600;
+font-size:.9rem;
+margin-bottom:.4rem}
+
+input,textarea{
+width:100%;
+padding:12px 14px;
+border-radius:14px;
+border:1px solid #e5e7eb;
+font-size:.95rem;
+font-family:inherit}
+
+textarea{min-height:140px;resize:vertical}
+
+input:focus,textarea:focus{
+outline:none;
+border-color:#38bdf8;
+box-shadow:0 0 0 3px rgba(56,189,248,.25)}
+
+.submit-button{
+width:100%;
+margin-top:1rem;
+padding:14px;
+border:none;
+border-radius:999px;
+background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+color:white;
+font-weight:800;
+cursor:pointer;
+box-shadow:0 14px 35px rgba(14,165,233,.45);
+transition:.25s}
+
+.submit-button:hover{
+transform:translateY(-2px);
+box-shadow:0 22px 50px rgba(14,165,233,.6)}
+
+.messages{
+margin-top:1.6rem;
+background:rgba(16,185,129,.12);
+color:#065f46;
+padding:14px;
+border-radius:14px;
+text-align:center;
+font-weight:600}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar-wrap">
+  <div class="navbar">
+    <div class="brand">
+      <h1><a href="/">AIT – AI Tourism</a></h1>
+      <p>Smart travel planning powered by artificial intelligence</p>
     </div>
-    {% endif %}
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/destinations/">Destinations</a>
+      <a href="/planner/">Plan a Trip</a>
+      <a href="/chatbot/">Chatbot</a>
+      <!-- <a href="/about/">About</a> -->
+      <a href="/contact/">Contact</a>
+    </div>
+  </div>
+</div>
+
+<div class="nav-separator"></div>
+
+<main>
+
+<section class="contact-section">
+<h2>📩 Get in Touch</h2>
+<p>Have a question, suggestion, or idea? We’d love to hear from you.</p>
+
+<form method="post" class="contact-form">
+{% csrf_token %}
+
+<div class="form-group">
+<label>Name</label>
+{{ form.name }}
+</div>
+
+<div class="form-group">
+<label>Email</label>
+{{ form.email }}
+</div>
+
+<div class="form-group">
+<label>Message</label>
+{{ form.message }}
+</div>
+
+<button type="submit" class="submit-button">Send Message ✨</button>
+</form>
+
+{% if messages %}
+<div class="messages">
+{% for message in messages %}
+<p>{{ message }}</p>
+{% endfor %}
+</div>
+{% endif %}
 </section>
-{% endblock %}
+
+</main>
+
+</body>
+</html>
