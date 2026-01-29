@@ -2,29 +2,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}AI Tourism{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+<meta charset="UTF-8">
+<title>{% block title %}AIT – AI Tourism{% endblock %}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<style>
+/* =========================
+   GLOBAL BACKGROUND
+========================= */
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+background:radial-gradient(circle at top,#e0f2fe,#f8fafc 40%);
+color:#0f172a}
+
+/* =========================
+   NAVBAR
+========================= */
+.navbar-wrap{
+max-width:1250px;
+margin:24px auto 0;
+padding:18px 26px;
+border-radius:26px;
+background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+box-shadow:0 25px 60px rgba(0,0,0,.18)}
+
+.navbar{
+display:flex;
+align-items:center;
+justify-content:space-between}
+
+.brand h1{
+margin:0;
+font-size:2.1rem;
+font-weight:800;
+letter-spacing:.4px}
+
+.brand h1 a{
+color:white;
+text-decoration:none}
+
+.brand p{
+margin:4px 0 0;
+font-size:.95rem;
+opacity:.95;
+color:#e0f2fe}
+
+.nav-links{
+display:flex;
+gap:26px;
+align-items:center}
+
+.nav-links a{
+color:white;
+text-decoration:none;
+font-weight:600;
+font-size:.95rem;
+position:relative;
+padding-bottom:4px}
+
+.nav-links a::after{
+content:"";
+position:absolute;
+left:0;bottom:0;
+width:0%;
+height:2px;
+background:white;
+transition:.3s}
+
+.nav-links a:hover::after{
+width:100%}
+
+/* =========================
+   HERO
+========================= */
+.hero{
+max-width:1150px;
+margin:70px auto 40px;
+text-align:center}
+
+.hero h2{
+font-size:3rem;
+font-weight:800;
+margin-bottom:.8rem}
+
+.hero p{
+max-width:760px;
+margin:auto;
+font-size:1.15rem;
+color:#475569}
+
+.hero .btn{
+display:inline-block;
+margin-top:1.4rem;
+padding:14px 36px;
+border-radius:999px;
+background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+color:white;
+text-decoration:none;
+font-weight:700;
+box-shadow:0 12px 30px rgba(14,165,233,.4);
+transition:.3s}
+
+.hero .btn:hover{
+transform:translateY(-2px);
+box-shadow:0 20px 45px rgba(14,165,233,.55)}
+
+/* =========================
+   MAIN GLASS CONTAINER
+========================= */
+main{
+max-width:1250px;
+margin:50px auto;
+padding:40px 46px;
+border-radius:32px;
+background:rgba(255,255,255,.72);
+backdrop-filter:blur(22px) saturate(160%);
+box-shadow:0 35px 80px rgba(0,0,0,.12)}
+
+/* =========================
+   FOOTER
+========================= */
+footer{
+text-align:center;
+margin:60px 0 30px;
+color:#64748b;
+font-size:.95rem}
+</style>
 </head>
 <body>
-    <header>
-        <h1><a href="/">AIT - AI Tourism</a></h1>
-        <nav>
+
+<!-- NAVBAR -->
+<div class="navbar-wrap">
+    <div class="navbar">
+
+        <div class="brand">
+            <h1><a href="/">AIT – AI Tourism</a></h1>
+            <p>Smart travel planning powered by artificial intelligence</p>
+        </div>
+
+        <div class="nav-links">
             <a href="/">Home</a>
             <a href="/destinations/">Destinations</a>
             <a href="/planner/">Plan a Trip</a>
             <a href="/chatbot/">Chatbot</a>
             <a href="/about/">About</a>
             <a href="/contact/">Contact</a>
-        </nav>
-    </header>
+        </div>
 
-    <main>{% block content %}{% endblock %}</main>
+    </div>
+</div>
 
-    <footer>
-        <p>&copy; 2025 AIT. All rights reserved.</p>
-    </footer>
+<!-- HERO -->
+<section class="hero">
+<h2>Travel Smarter. Travel Better. With AI.</h2>
+<p>AIT uses artificial intelligence to design personalized trips, recommend destinations, and guide travelers with intelligent assistance.</p>
+<a href="/planner/" class="btn">Start Planning Your Trip</a>
+</section>
 
-    {% block extra_js %}{% endblock %}
+<!-- PAGE CONTENT -->
+<main>
+
+    <!-- VALUE SECTION -->
+    <section class="home-value">
+        <h2>Designed for the Way You Travel</h2>
+        <p>
+            AIT is not just another travel website. It is an intelligent travel platform that understands
+            your preferences, analyzes destinations, and builds journeys tailored specifically to you.
+        </p>
+
+        <div class="value-grid">
+            <div class="value-card">
+                <span>🧠</span>
+                <h3>AI-Powered Planning</h3>
+                <p>Smart itineraries generated from real travel data, not fixed packages.</p>
+            </div>
+
+            <div class="value-card">
+                <span>🗺️</span>
+                <h3>Destination Intelligence</h3>
+                <p>Discover places that truly match your interests and travel style.</p>
+            </div>
+
+            <div class="value-card">
+                <span>💬</span>
+                <h3>Interactive Assistant</h3>
+                <p>Chat with AI to refine trips, explore ideas, and solve travel doubts instantly.</p>
+            </div>
+
+            <div class="value-card">
+                <span>✨</span>
+                <h3>Personalized Experiences</h3>
+                <p>Food, culture, adventure, relaxation — planned uniquely for you.</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- EXPERIENCE SECTION -->
+    <section class="home-experience">
+        <h2>From Inspiration to Itinerary</h2>
+        <p>
+            Whether you’re dreaming of beaches, mountains, cities, or culture,
+            AIT transforms your ideas into structured, realistic travel plans.
+        </p>
+
+        <div class="experience-steps">
+            <div class="step">
+                <span>1</span>
+                <p>Choose a destination or let AI suggest one.</p>
+            </div>
+
+            <div class="step">
+                <span>2</span>
+                <p>Tell us your dates, budget, and interests.</p>
+            </div>
+
+            <div class="step">
+                <span>3</span>
+                <p>Receive a complete day-wise AI travel plan.</p>
+            </div>
+
+            <div class="step">
+                <span>4</span>
+                <p>Refine it using the AI assistant and export as PDF.</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- TRUST / FUTURE SECTION -->
+    <section class="home-future">
+        <h2>Travel, Reimagined With Intelligence</h2>
+        <p>
+            AIT represents the future of tourism — where planning is instant, personalization is deep,
+            and every journey is built around the traveler, not the package.
+        </p>
+
+        <a href="/planner/" class="btn">Start Your AI Journey</a>
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+<p>&copy; 2026 AIT – AI Tourism. All rights reserved.</p>
+</footer>
+
 </body>
 </html>
