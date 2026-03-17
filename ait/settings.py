@@ -5,7 +5,7 @@ Clean edition – ready for AI Tourism (AIT)
 
 from pathlib import Path
 import os
-from doten import load_dotenv #dotenv
+from dotenv import load_dotenv #dotenv
 
 # -------------------- BASE --------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
