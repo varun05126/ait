@@ -1,52 +1,16 @@
-annotated-types>=0.7.0
-anyio>=4.0.0
-asgiref>=3.7.0
+Django>=4.2,<5.0
 
-certifi
-cffi
-charset-normalizer
-cryptography
-distro
+gunicorn
 
-Django>=4.2,<6.0
-
-google-api-core
-google-api-python-client
-google-auth
-google-auth-httplib2
-googleapis-common-protos
-google-generativeai
-
-grpcio>=1.75.0
-grpcio-status>=1.75.0
-
-h11
-httpcore
-httplib2
-httpx
-idna
+google-generativeai==0.5.4
 
 openai
 
-pillow
-proto-plus
-protobuf
-
-pyasn1
-pyasn1-modules
-pycparser
-
-pydantic
-pydantic-core
-
-pyparsing
-python-dotenv
-reportlab
 requests
-sniffio
-sqlparse
-tqdm
+python-dotenv
 
-typing-extensions
-uritemplate
-urllib3
+pillow
+reportlab
+
+grpcio>=1.75.0
+grpcio-status>=1.75.0
