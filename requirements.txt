@@ -13,3 +13,4 @@ pillow
 reportlab
 
 groq
+whitenoise
