@@ -18,6 +18,73 @@ background:radial-gradient(circle at top,#e0f2fe,#f8fafc 40%);
 color:#0f172a}
 
 /* =========================
+   MOBILE RESPONSIVE
+========================= */
+@media (max-width: 768px){
+
+    /* NAVBAR */
+    .navbar{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .nav-links{
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .brand h1{
+        font-size: 1.5rem;
+    }
+
+    .brand p{
+        font-size: 0.8rem;
+    }
+
+    /* HERO */
+    .hero{
+        margin: 40px 16px;
+    }
+
+    .hero h2{
+        font-size: 1.8rem;
+    }
+
+    .hero p{
+        font-size: 0.95rem;
+    }
+
+    .hero .btn{
+        padding: 10px 22px;
+        font-size: 0.9rem;
+    }
+
+    /* MAIN */
+    main{
+        margin: 20px 12px;
+        padding: 20px;
+        border-radius: 18px;
+    }
+
+    /* GRID FIX */
+    .value-grid{
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .experience-steps{
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .step{
+        text-align: left;
+    }
+
+}
+
+/* =========================
    NAVBAR
 ========================= */
 .navbar-wrap{
