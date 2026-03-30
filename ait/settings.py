@@ -18,8 +18,9 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-change-this")
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    https://ait-oi22.onrender.com
-    https://www.ai-trip-planner.xyz
+    "ait-oi22.onrender.com",
+    "ai-trip-planner.xyz",
+    "www.ai-trip-planner.xyz"
 ]
 
 # -------------------- APPS --------------------
