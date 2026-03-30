@@ -2,7 +2,7 @@ Django>=4.2,<5.0
 
 gunicorn
 
-google-generativeai==0.5.4
+google-generativeai==0.3.2
 
 openai
 
@@ -12,5 +12,4 @@ python-dotenv
 pillow
 reportlab
 
-grpcio>=1.75.0
-grpcio-status>=1.75.0
+groq
