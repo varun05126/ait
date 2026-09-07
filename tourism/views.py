@@ -28,7 +28,7 @@ def groq_generate(prompt, system="You are a helpful assistant."):
 
     try:
         completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="qwen/qwen3.8-27b",
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": prompt}
